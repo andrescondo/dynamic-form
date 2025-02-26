@@ -8,7 +8,5 @@ BEGIN
     SET @sql = 'SELECT * FROM ' + @Name + ' WHERE ' + @Parameters;
 
     EXEC sp_executesql @sql;
-    
-    COMMIT TRANSACTION;
-    
+        
 END
