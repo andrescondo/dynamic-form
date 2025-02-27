@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import './../../../App.css'
+import { Link } from "react-router-dom";
+
 
 const FormView = () => {
     const [form, setForm] = useState([]);
@@ -35,7 +37,11 @@ const FormView = () => {
     return (
         <main className='FormView'>
             <header>
-                <div></div>
+                <div>
+                    <Link className="button" to="/">
+                    Regresar
+                    </Link>
+                </div>
                 <h2>
                 Formulario
                 </h2>
