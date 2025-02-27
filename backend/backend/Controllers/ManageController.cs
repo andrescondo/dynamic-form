@@ -17,14 +17,21 @@ namespace backend.Controllers
             _manageService = manageService;
 		}
 
-        [HttpGet(Name = "GetAllForm")]
+        [HttpGet("all-form",Name = "GetAllForm")]
         public async Task<IActionResult> Get()
         {
             var data = await _manageService.GetAllFormAsync();
             return Ok(data);
         }
 
+        [HttpGet("form/{id}", Name = "GetForm")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var data = await _manageService.GetFormAsync(id);
+            return Ok(data);
+        }
 
-	}
+
+    }
 }
 

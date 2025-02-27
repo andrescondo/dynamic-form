@@ -15,8 +15,10 @@ namespace backend.Services
     public interface IManageService
 	{
 		Task<ResponseGeneral> GetAllFormAsync();
-	}
-	public class ManageServices: IManageService
+        Task<ResponseGeneral> GetFormAsync(int id);
+
+    }
+    public class ManageServices: IManageService
     {
         private readonly ApplicationDbContext _configuration;
         public ManageServices(ApplicationDbContext context)
@@ -84,6 +86,68 @@ namespace backend.Services
             }
 
         }
-	}
+
+
+        public async Task<ResponseGeneral> GetFormAsync(int id)
+        {
+            try
+            {
+                var data = new List<dynamic>();
+
+                using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
+                {
+                    await connection.OpenAsync();
+                    string storedProcedureName = "SearchTable";
+                    using (var command = new SqlCommand(storedProcedureName, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = "Inputs" });
+                        command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = $"IDForm={id}" });
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var row = new ExpandoObject() as IDictionary<string, Object>;
+
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    row.Add(reader.GetName(i), reader.GetValue(i));
+                                }
+
+                                data.Add(row);
+                            }
+                        }
+                    }
+                }
+
+                List<dynamic> messages = new List<dynamic> { new Message { Text = "Búsqueda exitosa", Error = false } };
+                Response responseHelper = new Response();
+                ResponseGeneral response = responseHelper.ResponseSuccess(
+                    status: 200,
+                    messages: messages,
+                    data: new List<dynamic>(data),
+                    error: false
+                );
+
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                Response responseHelper = new Response();
+                ResponseGeneral errorResponse = responseHelper.ResponseSuccess(
+                    status: 500,
+                    messages: new List<dynamic> { new Message { Text = $"Ocurrió un error: {ex.Message}", Error = true } },
+                    data: new List<dynamic>(),
+                    error: true
+                );
+
+                return errorResponse;
+            }
+
+        }
+    }
 }
 
