@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './App.css';
+import { Link } from "react-router-dom";
+
 
 function App() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const res = axios.get('https://localhost:7048/Manage/all-form')
-      .catch((err) => {
-        console.log(err)
-      });
-    console.log(res);
+    async function getForm() {
+      const res = await axios.get('https://localhost:7048/Manage/all-form')
+        .catch((err) => {
+          console.log(err)
+        });
+      setData(res.data.data);
+    }
+
+    getForm();
   }, [])
 
 
@@ -20,6 +26,25 @@ function App() {
         Lista de formularios
       </header>
       <main>
+
+        <div className='App-ButtonForm--create'>
+          <div></div>
+          <button className='button'>
+            Crear Formulario
+          </button>
+        </div>
+        <div className='App-Container--list'>
+          {
+            data.map((data, index) =>
+            (
+              <div key={index} className="App-ContainerList-items">
+                <span>{data.FormName}</span>
+                <Link className="button" to={`/form/${data.ID}`}>Ver</Link>
+              </div>
+            ))
+          }
+
+        </div>
 
 
       </main>
