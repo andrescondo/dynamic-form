@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
+using backend.Models.Request;
 //using backend.Models;
 namespace backend.Controllers
 {
@@ -30,7 +31,14 @@ namespace backend.Controllers
             var data = await _manageService.GetFormAsync(id);
             return Ok(data);
         }
+        //CreateTableRequest form
 
+        [HttpPost("form/create", Name = "PostCreateForm")]
+        public async Task<IActionResult> Post(CreateTableRequest form)
+        {
+            var data = await _manageService.PostCreateForm(form);
+            return Ok(data);
+        }
 
     }
 }
