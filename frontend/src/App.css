@@ -56,9 +56,45 @@ body{
 .App-ContainerList-items > span{
   color: white;
 }
+.FormView-List{
+  width: 80%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.FormView header{
+  width: 100%;
+ display: flex;
+ justify-content:space-around;
+ align-items: center;
+ margin: 20px
+}
+
+.FormView header h2{
+  color: white;
+}
 
 .App-link {
   color: #61dafb;
+}
+
+.label{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0px;
+}
+
+.label > span{
+  width: 30%;
+  color: white;
+}
+
+.label > input{
+  width: 70%;
+  padding: 8px 16px;
 }
 
 @keyframes App-logo-spin {
