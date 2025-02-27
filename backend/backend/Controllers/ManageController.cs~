@@ -1,0 +1,17 @@
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using backend.Services;
+//using backend.Models;
+namespace backend.Controllers
+{
+	public class ManageController : ControllerBase
+    {
+        private readonly ILogger<ManageController> _logger;
+        //private readonly IValidateApiPermissionService _permissionService;
+
+        public ManageController()
+		{
+		}
+	}
+}
+
