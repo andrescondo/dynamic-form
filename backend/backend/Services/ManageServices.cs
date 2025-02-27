@@ -160,27 +160,24 @@ namespace backend.Services
                 using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
                 {
                     await connection.OpenAsync();
-                    string storedProcedureName = "SearchTable";
+                    string storedProcedureName = "AddDataInTable";
                     using (var command = new SqlCommand(storedProcedureName, connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = "Inputs" });
-                        command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = "IDForm=" });
+                        command.Parameters.Add(new SqlParameter("@TableName", SqlDbType.VarChar) { Value = "Form" });
+                        command.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "FormName" });
+                        command.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = form.name });
 
-                        //using (var reader = await command.ExecuteReaderAsync())
-                        //{
-                        //    while (await reader.ReadAsync())
-                        //    {
-                        //        var row = new ExpandoObject() as IDictionary<string, Object>;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                // Obtener el valor de la columna "ID"
+                                var newId = reader["ID"];
+                                Console.WriteLine($"Nuevo ID insertado: {newId}");
 
-                        //        for (int i = 0; i < reader.FieldCount; i++)
-                        //        {
-                        //            row.Add(reader.GetName(i), reader.GetValue(i));
-                        //        }
-
-                        //        data.Add(row);
-                        //    }
-                        //}
+                            }
+                        }
                     }
                 }
 
