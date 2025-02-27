@@ -29,9 +29,9 @@ function App() {
 
         <div className='App-ButtonForm--create'>
           <div></div>
-          <button className='button'>
+          <Link to="/form/create" className='button'>
             Crear Formulario
-          </button>
+          </Link>
         </div>
         <div className='App-Container--list'>
           {

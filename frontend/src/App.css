@@ -38,6 +38,15 @@ body{
   text-decoration: none;
 }
 
+.button-close{
+  background-color: #ae4a45;
+  color: white;
+  padding: 8px 16px;
+  border-radius:50%;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 .App-Container--list{
   width: 100%;
   display: flex;
@@ -62,6 +71,7 @@ body{
   margin: auto;
   display: flex;
   flex-direction: column;
+  margin-bottom: 30px;
 
 }
 
@@ -95,6 +105,43 @@ body{
 .label > input{
   width: 70%;
   padding: 8px 16px;
+}
+
+.label-Inputs{
+  display: flex;
+  flex-direction: column;
+}
+
+.label-input{
+  width: 100%;
+  display: flex;
+  margin: 20px 0px;
+  color: white;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid gray;
+}
+
+.label-input .label-Inputs{
+  width: 45%;
+  margin: 0px 5px;
+}
+
+.label-Inputs input{
+  padding: 8px 16px;
+}
+
+.label-Inputs select{
+  padding: 8px 16px;
+}
+
+.label-input button{
+  width: 35px;
+  height: 35px;
+  display: flex;
+justify-content: center;
+align-items: center;
+
 }
 
 @keyframes App-logo-spin {

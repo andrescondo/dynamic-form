@@ -32,8 +32,6 @@ const FormView = () => {
       }
 
 
-
-
     return (
         <main className='FormView'>
             <header>
@@ -46,9 +44,9 @@ const FormView = () => {
                 Formulario
                 </h2>
                 <div>
-                    <button className='button'>
+                    <Link className='button'>
                         Editar
-                    </button>
+                    </Link>
                 </div>
             </header>
             <section>
