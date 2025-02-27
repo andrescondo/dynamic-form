@@ -6,7 +6,7 @@ AS
 BEGIN
     DECLARE @SQL NVARCHAR(MAX);
 
-    SET @SQL = 'INSERT INTO ' + @TableName + ' (' + @Columns + ') VALUES (' + @Values + ')';
+    SET @SQL = 'INSERT INTO ' + @TableName + ' (' + @Columns + ') VALUES (''' + @Values + ''');  SELECT SCOPE_IDENTITY() AS ID;';
 
     EXEC sp_executesql @SQL;
 END
