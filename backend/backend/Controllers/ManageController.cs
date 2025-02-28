@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using backend.Models.Request;
+using backend.Models.Response;
 //using backend.Models;
 namespace backend.Controllers
 {
@@ -22,6 +23,10 @@ namespace backend.Controllers
         public async Task<IActionResult> Get()
         {
             var data = await _manageService.GetAllFormAsync();
+            if (data.Error)
+            {
+                return BadRequest(data);
+            }
             return Ok(data);
         }
 
@@ -29,6 +34,10 @@ namespace backend.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var data = await _manageService.GetFormAsync(id);
+            if (data.Error)
+            {
+                return BadRequest(data);
+            }
             return Ok(data);
         }
         //CreateTableRequest form
@@ -36,7 +45,10 @@ namespace backend.Controllers
         [HttpPost("form/create", Name = "PostCreateForm")]
         public async Task<IActionResult> Post(CreateTableRequest form)
         {
-            var data = await _manageService.PostCreateForm(form);
+            ResponseGeneral data = await _manageService.PostCreateForm(form);
+            if (data.Error) {
+                return BadRequest(data);
+            }
             return Ok(data);
         }
 
