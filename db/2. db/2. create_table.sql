@@ -13,6 +13,8 @@ CREATE TABLE Inputs(
     ID INT IDENTITY(1,1) PRIMARY KEY,
     InputsName NVARCHAR(255) NOT NULL,
     InputsType NVARCHAR(255) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    IsDeleted BIT NOT NULL DEFAULT 0,
     IDForm INT,
     FOREIGN KEY (IDForm) REFERENCES Form(ID)
 )
@@ -31,12 +33,12 @@ CREATE TABLE Personas (
 );
 
 -- Creacion de inputs relacionados a tabla de personas
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Nombres', 'text', 1);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('FechaNacimiento', 'date', 1);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Estatura', 'number', 1);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Apellidos', 'text', 1);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Direccion', 'text', 1);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Correo', 'text', 1);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Nombres', 'text', 1, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('FechaNacimiento', 'date', 1, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Estatura', 'number', 1, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Apellidos', 'text', 1, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Direccion', 'text', 1, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Correo', 'text', 1, 1, 0);
 
 
 --Creación de tabla de mascotas
@@ -50,7 +52,7 @@ CREATE TABLE Mascotas (
     FOREIGN KEY (IDForm) REFERENCES Form(ID)
 );
 
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Especie', 'text', 2);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Raza', 'text', 2);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Color', 'text', 2);
-INSERT INTO Inputs (InputsName, InputsType, IDForm ) values ('Nombre', 'text', 2);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Especie', 'text', 2, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Raza', 'text', 2, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Color', 'text', 2, 1, 0);
+INSERT INTO Inputs (InputsName, InputsType, IDForm, IsActive, IsDeleted ) values ('Nombre', 'text', 2, 1, 0);
