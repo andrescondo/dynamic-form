@@ -168,11 +168,13 @@ namespace backend.Services
                     {
                         try
                         {
+                            string NewName1 = form.name.Replace(" ", "");
+
                             // Insert name form
                             string storedProcedureName = "AddDataInTable";
                             using (var command = new SqlCommand(storedProcedureName, connection, transaction))
                             {
-                                string NewName1 = form.name.Replace(" ", "");
+                                
                                 command.CommandType = CommandType.StoredProcedure;
                                 command.Parameters.Add(new SqlParameter("@TableName", SqlDbType.VarChar) { Value = "Form" });
                                 command.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "FormName" });
@@ -215,17 +217,18 @@ namespace backend.Services
                             using (var command2 = new SqlCommand("CreateTable", connection, transaction))
                             {
                                 command2.CommandType = CommandType.StoredProcedure;
-                                command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = form.name });
+                                command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = NewName1 });
                                 command2.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = $"{columns}" });
 
                                 await command2.ExecuteNonQueryAsync();
                             }
 
                             // Insert inputs
-                            foreach (var newinput in form.inputs)
+                            foreach (Inputs newinput in form.inputs)
                             {
                                 string NewName3 = newinput.name.Replace(" ", "");
-                                var value = $"'{NewName3}', '{newinput.type}', {newId}";
+                                string type = newinput.type;
+                                var value = $"'{NewName3}', '{type}', {newId}";
                                 using (var command3 = new SqlCommand("AddDataInputs", connection, transaction))
                                 {
                                     command3.CommandType = CommandType.StoredProcedure;

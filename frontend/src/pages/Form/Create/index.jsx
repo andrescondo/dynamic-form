@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import axios from 'axios';
 import './../../../App.css'
 
 const initialInput = {
@@ -10,7 +11,7 @@ const FormCreate = () => {
     const [inputs, setInputs] = useState(initialInput);
     const [containers, setContainers] = useState([]);
 
-    
+
     const handleAddContainer = () => {
         setContainers([...containers, { name: '', type: '' }]);
     };
@@ -37,15 +38,33 @@ const FormCreate = () => {
         });
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
-            e.preventDefault();
-            inputs.inputs.push(...containers)
+            inputs.inputs = [];
+            inputs.inputs.push(...containers);
             console.log(inputs)
-            console.log(containers)
-            
+
+            const res = await axios.post('https://localhost:7048/Manage/form/create', inputs)
+                .catch(err => {
+                    throw new Error(err.response.data.messages[0].text);
+                });
+
+
+            console.log(res);
+            setContainers([]);
+            const updatedInputs = { name:'', inputs: [] };
+            setInputs(updatedInputs);
+
+            alert(res.data.messages[0].text)
+
         } catch (error) {
             console.log(error);
+            alert(`Error: ${error.message}`)
+
+        }
+        finally {
+            
         }
     }
 
@@ -62,7 +81,7 @@ const FormCreate = () => {
                     Crear Formulario
                 </h2>
                 <div>
-                    
+
                 </div>
             </header>
             <section>
@@ -74,6 +93,8 @@ const FormCreate = () => {
                             value={inputs.name}
                             name="name"
                             id='name'
+                            pattern="[A-Za-z0-9 ]+"
+                            required
                             onChange={handleChange} />
                     </label>
                     <div>
@@ -91,6 +112,8 @@ const FormCreate = () => {
                                         <input
                                             type="text"
                                             value={container.text}
+                                            pattern="[A-Za-z0-9 ]+"
+                                            required
                                             onChange={(e) => handleChangeContainer(index, 'name', e.target.value)}
                                         />
                                     </label>
@@ -98,6 +121,7 @@ const FormCreate = () => {
                                         Tipo de input
                                         <select
                                             value={container.type}
+                                            required
                                             onChange={(e) => handleChangeContainer(index, 'type', e.target.value)}
                                         >
                                             <option value="">Seleccione</option>
@@ -113,7 +137,7 @@ const FormCreate = () => {
                             ))}
                         </div>
                     </div>
-                   
+
                     <input className='button' type="submit" value="Guardar" />
                 </form>
 
