@@ -10,6 +10,7 @@ using backend.Network;
 using backend.Data;
 using Newtonsoft.Json;
 using System.Dynamic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace backend.Services
 {
@@ -160,6 +161,7 @@ namespace backend.Services
                 using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
                 {
                     await connection.OpenAsync();
+                    // Insert name form
                     string storedProcedureName = "AddDataInTable";
                     using (var command = new SqlCommand(storedProcedureName, connection))
                     {
@@ -172,9 +174,50 @@ namespace backend.Services
                         {
                             if (await reader.ReadAsync())
                             {
-                                // Obtener el valor de la columna "ID"
                                 var newId = reader["ID"];
-                                Console.WriteLine($"Nuevo ID insertado: {newId}");
+                                connection.Close();
+
+                                //create table
+                                using (var connection2 = (SqlConnection)_configuration.Database.GetDbConnection())
+                                {
+                                    await connection2.OpenAsync();
+                                    using (var command2 = new SqlCommand("CreateTable", connection2))
+                                    {
+                                        command2.CommandType = CommandType.StoredProcedure;
+                                        string columns = "";
+                                        command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = form.name });
+                                        foreach (Inputs input in form.inputs) {
+                                            var type = "";
+                                            switch(input.type)
+                                            {
+                                                case "text":
+                                                    type = "NVARCHAR(MAX)";
+                                                    break;
+                                                case "number":
+                                                    type = "INT";
+                                                    break;
+                                                case "date":
+                                                    type = "DateTime";
+                                                    break;
+
+                                            }
+                                            columns += $"{input.name} {type}, ";
+                                        }
+                                        columns += $" IDForm INT, FOREIGN KEY (IDForm) REFERENCES Form(ID) ";
+                                        command2.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = $"{columns}" });
+
+                                        using (var reader2 = await command2.ExecuteReaderAsync())
+                                        {
+                                            if (await reader2.ReadAsync())
+                                            {
+                                                connection2.Close();
+                                            }
+                                        }
+                                    }
+
+                                }
+                                
+
 
                             }
                         }
