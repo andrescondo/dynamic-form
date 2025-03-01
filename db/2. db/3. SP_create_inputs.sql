@@ -1,4 +1,4 @@
-CREATE PROCEDURE AddDataInputs
+CREATE PROCEDURE SP_AddDataInputs
     @Columns NVARCHAR(MAX),
     @Values NVARCHAR(MAX)
 AS

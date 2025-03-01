@@ -1,4 +1,4 @@
-CREATE PROCEDURE AddDataInTable
+CREATE PROCEDURE SP_AddDataInTable
     @TableName NVARCHAR(MAX),
     @Columns NVARCHAR(MAX),
     @Values NVARCHAR(MAX)

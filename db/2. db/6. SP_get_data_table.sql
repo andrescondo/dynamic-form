@@ -1,4 +1,4 @@
-CREATE PROCEDURE SearchTable
+CREATE PROCEDURE SP_SearchTable
     @Name NVARCHAR(255),
     @Parameters NVARCHAR(MAX)
 AS

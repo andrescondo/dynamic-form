@@ -1,4 +1,4 @@
-CREATE PROCEDURE CreateTable 
+CREATE PROCEDURE SP_CreateTable 
     @Name NVARCHAR(255),
     @Columns NVARCHAR(MAX)
 AS
