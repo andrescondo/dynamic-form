@@ -20,6 +20,7 @@ namespace backend.Services
 		Task<ResponseGeneral> GetAllFormAsync();
         Task<ResponseGeneral> GetFormAsync(int id);
         Task<ResponseGeneral> PostCreateForm(CreateTableRequest form);
+        Task<ResponseGeneral> PostEditForm(EditTableRequest form);
 
     }
     public class ManageServices: IManageService
@@ -240,6 +241,137 @@ namespace backend.Services
 
                             // Commit the transaction if all commands succeed
                             transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            // Rollback the transaction if any command fails
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+
+
+                }
+
+                List<dynamic> messages = new List<dynamic> { new Message { Text = "Creación exitosa", Error = false } };
+                Response responseHelper = new Response();
+                ResponseGeneral response = responseHelper.ResponseSuccess(
+                    status: 200,
+                    messages: messages,
+                    data: new List<dynamic>(),
+                    error: false
+                );
+
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                Response responseHelper = new Response();
+                ResponseGeneral errorResponse = responseHelper.ResponseSuccess(
+                    status: 500,
+                    messages: new List<dynamic> { new Message { Text = $"Ocurrió un error: {ex.Message}", Error = true } },
+                    data: new List<dynamic>(),
+                    error: true
+                );
+
+                return errorResponse;
+            }
+
+        }
+
+
+        public async Task<ResponseGeneral> PostEditForm(EditTableRequest form)
+        {
+            try
+            {
+                var data = new List<dynamic>();
+
+                using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
+                {
+                    await connection.OpenAsync();
+                    object? newId;
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            //string NameForm = form.name.Replace(" ", "");
+
+                            //// Insert name form
+                            //string storedProcedureName = "AddDataInTable";
+                            //using (var command = new SqlCommand(storedProcedureName, connection, transaction))
+                            //{
+
+                            //    command.CommandType = CommandType.StoredProcedure;
+                            //    command.Parameters.Add(new SqlParameter("@TableName", SqlDbType.VarChar) { Value = "Form" });
+                            //    command.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "FormName" });
+                            //    command.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = NameForm });
+
+                            //    using (var reader = await command.ExecuteReaderAsync())
+                            //    {
+                            //        if (await reader.ReadAsync())
+                            //        {
+                            //            newId = reader["ID"];
+                            //        }
+                            //        else
+                            //        {
+                            //            throw new Exception("No se guardo correctamente el registro");
+                            //        }
+                            //    }
+                            //}
+
+                            //// Create table
+                            //string columns = "";
+                            //foreach (Inputs input in form.inputs)
+                            //{
+                            //    var type = "";
+                            //    string NameInput = input.name.Replace(" ", "");
+
+                            //    switch (input.type)
+                            //    {
+                            //        case "text":
+                            //            type = "NVARCHAR(MAX)";
+                            //            break;
+                            //        case "number":
+                            //            type = "INT";
+                            //            break;
+                            //        case "date":
+                            //            type = "DateTime";
+                            //            break;
+                            //    }
+                            //    columns += $"{NameInput} {type}, ";
+                            //}
+                            //columns += $" IDForm INT, FOREIGN KEY (IDForm) REFERENCES Form(ID) ";
+
+                            //using (var command2 = new SqlCommand("CreateTable", connection, transaction))
+                            //{
+                            //    command2.CommandType = CommandType.StoredProcedure;
+                            //    command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = NameForm });
+                            //    command2.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = $"{columns}" });
+
+                            //    await command2.ExecuteNonQueryAsync();
+                            //}
+
+                            //// Insert inputs
+                            //foreach (Inputs newinput in form.inputs)
+                            //{
+                            //    string NameInput = newinput.name.Replace(" ", "");
+                            //    string type = newinput.type;
+                            //    var value = $"'{NameInput}', '{type}', {newId}";
+                            //    using (var command3 = new SqlCommand("AddDataInputs", connection, transaction))
+                            //    {
+                            //        command3.CommandType = CommandType.StoredProcedure;
+                            //        command3.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "InputsName, InputsType, IDForm" });
+                            //        command3.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = value });
+
+                            //        await command3.ExecuteNonQueryAsync();
+                            //    }
+                            //}
+
+                            //// Commit the transaction if all commands succeed
+                            //transaction.Commit();
                         }
                         catch (Exception ex)
                         {

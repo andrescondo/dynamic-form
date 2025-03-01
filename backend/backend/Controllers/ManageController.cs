@@ -51,6 +51,17 @@ namespace backend.Controllers
             return Ok(data);
         }
 
+        [HttpPut("form/edit", Name = "PostEditForm")]
+        public async Task<IActionResult> Put(EditTableRequest form)
+        {
+            ResponseGeneral data = await _manageService.PostEditForm(form);
+            if (data.Error)
+            {
+                return BadRequest(data);
+            }
+            return Ok(data);
+        }
+
     }
 }
 

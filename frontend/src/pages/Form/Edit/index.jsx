@@ -77,7 +77,7 @@ const FormEdit = () => {
 
     const showConfirmChangeIsActive = (status, index, value) => {
         // eslint-disable-next-line no-alert
-        const userConfirmed = window.confirm(`¿Seguro ${status ? 'Desactivas' : 'Activas'} este campo los usuarios ${status ? 'NO' : ''} podrán verlos?`);
+        const userConfirmed = window.confirm(`¿Seguro desea ${status ? 'Desactivar' : 'Activar'} este campo? \nLos usuarios ${status ? 'NO' : ''} podrán verlo`);
         if (userConfirmed) {
             handleCheckboxChange(index, value);
         } else {
