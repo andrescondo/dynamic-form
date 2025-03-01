@@ -40,7 +40,7 @@ namespace backend.Services
                 using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
                 {
                     await connection.OpenAsync();
-                    string storedProcedureName = "SearchTable";
+                    string storedProcedureName = "SP_SearchTable";
                     using (var command = new SqlCommand(storedProcedureName, connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
@@ -102,7 +102,7 @@ namespace backend.Services
                 using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
                 {
                     await connection.OpenAsync();
-                    string storedProcedureName = "SearchTable";
+                    string storedProcedureName = "SP_SearchTable";
                     using (var command = new SqlCommand(storedProcedureName, connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
@@ -171,7 +171,7 @@ namespace backend.Services
                             string NameForm = form.name.Replace(" ", "");
 
                             // Insert name form
-                            string storedProcedureName = "AddDataInTable";
+                            string storedProcedureName = "SP_AddDataInTable";
                             using (var command = new SqlCommand(storedProcedureName, connection, transaction))
                             {
                                 
@@ -214,7 +214,7 @@ namespace backend.Services
                             }
                             columns += $" IDForm INT, FOREIGN KEY (IDForm) REFERENCES Form(ID) ";
 
-                            using (var command2 = new SqlCommand("CreateTable", connection, transaction))
+                            using (var command2 = new SqlCommand("SP_CreateTable", connection, transaction))
                             {
                                 command2.CommandType = CommandType.StoredProcedure;
                                 command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = NameForm });
@@ -229,7 +229,7 @@ namespace backend.Services
                                 string NameInput = newinput.name.Replace(" ", "");
                                 string type = newinput.type;
                                 var value = $"'{NameInput}', '{type}', {newId}";
-                                using (var command3 = new SqlCommand("AddDataInputs", connection, transaction))
+                                using (var command3 = new SqlCommand("SP_AddDataInputs", connection, transaction))
                                 {
                                     command3.CommandType = CommandType.StoredProcedure;
                                     command3.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "InputsName, InputsType, IDForm" });
@@ -291,87 +291,68 @@ namespace backend.Services
                 using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
                 {
                     await connection.OpenAsync();
-                    object? newId;
 
                     using (var transaction = connection.BeginTransaction())
                     {
                         try
                         {
-                            //string NameForm = form.name.Replace(" ", "");
 
-                            //// Insert name form
-                            //string storedProcedureName = "AddDataInTable";
-                            //using (var command = new SqlCommand(storedProcedureName, connection, transaction))
-                            //{
+                            // Insert inputs
+                            foreach (InputsEdit Input in form.inputs)
+                            {
+                                string NameInput = Input.name.Replace(" ", "");
+                                bool? isActiveNullable = Input.IsActive;
+                                bool? isDeleteNullable = Input.IsDeleted;
 
-                            //    command.CommandType = CommandType.StoredProcedure;
-                            //    command.Parameters.Add(new SqlParameter("@TableName", SqlDbType.VarChar) { Value = "Form" });
-                            //    command.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "FormName" });
-                            //    command.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = NameForm });
+                                int active;
+                                int deleted;
+                                string type = "";
 
-                            //    using (var reader = await command.ExecuteReaderAsync())
-                            //    {
-                            //        if (await reader.ReadAsync())
-                            //        {
-                            //            newId = reader["ID"];
-                            //        }
-                            //        else
-                            //        {
-                            //            throw new Exception("No se guardo correctamente el registro");
-                            //        }
-                            //    }
-                            //}
+                                switch (Input.type)
+                                {
+                                    case "text":
+                                        type = "NVARCHAR(MAX)";
+                                        break;
+                                    case "number":
+                                        type = "INT";
+                                        break;
+                                    case "date":
+                                        type = "DateTime";
+                                        break;
+                                }
 
-                            //// Create table
-                            //string columns = "";
-                            //foreach (Inputs input in form.inputs)
-                            //{
-                            //    var type = "";
-                            //    string NameInput = input.name.Replace(" ", "");
 
-                            //    switch (input.type)
-                            //    {
-                            //        case "text":
-                            //            type = "NVARCHAR(MAX)";
-                            //            break;
-                            //        case "number":
-                            //            type = "INT";
-                            //            break;
-                            //        case "date":
-                            //            type = "DateTime";
-                            //            break;
-                            //    }
-                            //    columns += $"{NameInput} {type}, ";
-                            //}
-                            //columns += $" IDForm INT, FOREIGN KEY (IDForm) REFERENCES Form(ID) ";
+                                if (isActiveNullable.HasValue){
+                                    active = 1;
+                                } else {
+                                    active = 0;
+                                }
 
-                            //using (var command2 = new SqlCommand("CreateTable", connection, transaction))
-                            //{
-                            //    command2.CommandType = CommandType.StoredProcedure;
-                            //    command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = NameForm });
-                            //    command2.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = $"{columns}" });
+                                if (isDeleteNullable.HasValue){
+                                    deleted = 1;
+                                } else {
+                                    deleted = 0;
+                                }
 
-                            //    await command2.ExecuteNonQueryAsync();
-                            //}
+                                using (var command = new SqlCommand("SP_EditInputs", connection, transaction))
+                                {
 
-                            //// Insert inputs
-                            //foreach (Inputs newinput in form.inputs)
-                            //{
-                            //    string NameInput = newinput.name.Replace(" ", "");
-                            //    string type = newinput.type;
-                            //    var value = $"'{NameInput}', '{type}', {newId}";
-                            //    using (var command3 = new SqlCommand("AddDataInputs", connection, transaction))
-                            //    {
-                            //        command3.CommandType = CommandType.StoredProcedure;
-                            //        command3.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "InputsName, InputsType, IDForm" });
-                            //        command3.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = value });
+                                    command.CommandType = CommandType.StoredProcedure;
+                                    command.Parameters.Add(new SqlParameter("@InputNameNew", SqlDbType.VarChar) { Value = NameInput });
+                                    command.Parameters.Add(new SqlParameter("@InputId", SqlDbType.Int) { Value = Input.ID });
+                                    command.Parameters.Add(new SqlParameter("@FormId", SqlDbType.Int) { Value = Input.IDForm });
+                                    command.Parameters.Add(new SqlParameter("@FormType", SqlDbType.VarChar) { Value = type });
+                                    command.Parameters.Add(new SqlParameter("@IsActive", SqlDbType.Int) { Value = active });
+                                    command.Parameters.Add(new SqlParameter("@IsDeleted", SqlDbType.Int) { Value = deleted });
 
-                            //        await command3.ExecuteNonQueryAsync();
-                            //    }
-                            //}
+                                    //command3.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = value });
 
-                            //// Commit the transaction if all commands succeed
-                            //transaction.Commit();
+                                    await command.ExecuteNonQueryAsync();
+                                }
+                            }
+
+                            // Commit the transaction if all commands succeed
+                            transaction.Commit();
                         }
                         catch (Exception ex)
                         {
@@ -384,7 +365,7 @@ namespace backend.Services
 
                 }
 
-                List<dynamic> messages = new List<dynamic> { new Message { Text = "Creación exitosa", Error = false } };
+                List<dynamic> messages = new List<dynamic> { new Message { Text = "Actualización exitosa", Error = false } };
                 Response responseHelper = new Response();
                 ResponseGeneral response = responseHelper.ResponseSuccess(
                     status: 200,
