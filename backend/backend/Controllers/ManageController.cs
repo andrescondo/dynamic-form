@@ -40,7 +40,6 @@ namespace backend.Controllers
             }
             return Ok(data);
         }
-        //CreateTableRequest form
 
         [HttpPost("form/create", Name = "PostCreateForm")]
         public async Task<IActionResult> Post(CreateTableRequest form)

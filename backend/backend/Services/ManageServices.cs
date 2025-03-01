@@ -158,7 +158,6 @@ namespace backend.Services
             {
                 var data = new List<dynamic>();
                 
-
                 using (var connection = (SqlConnection)_configuration.Database.GetDbConnection())
                 {
                     await connection.OpenAsync();
@@ -168,7 +167,7 @@ namespace backend.Services
                     {
                         try
                         {
-                            string NewName1 = form.name.Replace(" ", "");
+                            string NameForm = form.name.Replace(" ", "");
 
                             // Insert name form
                             string storedProcedureName = "AddDataInTable";
@@ -178,7 +177,7 @@ namespace backend.Services
                                 command.CommandType = CommandType.StoredProcedure;
                                 command.Parameters.Add(new SqlParameter("@TableName", SqlDbType.VarChar) { Value = "Form" });
                                 command.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "FormName" });
-                                command.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = NewName1 });
+                                command.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = NameForm });
 
                                 using (var reader = await command.ExecuteReaderAsync())
                                 {
@@ -196,7 +195,7 @@ namespace backend.Services
                             foreach (Inputs input in form.inputs)
                             {
                                 var type = "";
-                                string NewName2 = input.name.Replace(" ", "");
+                                string NameInput = input.name.Replace(" ", "");
 
                                 switch (input.type)
                                 {
@@ -210,14 +209,14 @@ namespace backend.Services
                                         type = "DateTime";
                                         break;
                                 }
-                                columns += $"{NewName2} {type}, ";
+                                columns += $"{NameInput} {type}, ";
                             }
                             columns += $" IDForm INT, FOREIGN KEY (IDForm) REFERENCES Form(ID) ";
 
                             using (var command2 = new SqlCommand("CreateTable", connection, transaction))
                             {
                                 command2.CommandType = CommandType.StoredProcedure;
-                                command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = NewName1 });
+                                command2.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = NameForm });
                                 command2.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = $"{columns}" });
 
                                 await command2.ExecuteNonQueryAsync();
@@ -226,9 +225,9 @@ namespace backend.Services
                             // Insert inputs
                             foreach (Inputs newinput in form.inputs)
                             {
-                                string NewName3 = newinput.name.Replace(" ", "");
+                                string NameInput = newinput.name.Replace(" ", "");
                                 string type = newinput.type;
-                                var value = $"'{NewName3}', '{type}', {newId}";
+                                var value = $"'{NameInput}', '{type}', {newId}";
                                 using (var command3 = new SqlCommand("AddDataInputs", connection, transaction))
                                 {
                                     command3.CommandType = CommandType.StoredProcedure;

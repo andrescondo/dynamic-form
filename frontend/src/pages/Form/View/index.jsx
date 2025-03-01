@@ -11,17 +11,17 @@ const FormView = () => {
     const { id } = useParams();
 
     useEffect(() => {
-        async function GetForm() {
+        async function getDataForm() {
             const res = await axios.get(`https://localhost:7048/Manage/form/${id}`)
                 .catch(err => {
                     console.log(err);
                 })
 
-            console.log(res);
+            console.log(res.data.data);
             setForm(res.data.data)
         }
 
-        GetForm();
+        getDataForm();
     }, [])
 
     const handleChange = (e) => {
@@ -44,7 +44,7 @@ const FormView = () => {
                 Formulario
                 </h2>
                 <div>
-                    <Link className='button'>
+                    <Link className='button' to={`/form/edit/${id}`}>
                         Editar
                     </Link>
                 </div>
