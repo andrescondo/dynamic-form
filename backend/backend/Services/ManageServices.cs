@@ -18,7 +18,7 @@ namespace backend.Services
     public interface IManageService
 	{
 		Task<ResponseGeneral> GetAllFormAsync();
-        Task<ResponseGeneral> GetFormAsync(int id);
+        Task<ResponseGeneral> GetFormAsync(int id, int audience);
         Task<ResponseGeneral> PostCreateForm(CreateTableRequest form);
         Task<ResponseGeneral> PostEditForm(EditTableRequest form);
 
@@ -93,7 +93,7 @@ namespace backend.Services
         }
 
 
-        public async Task<ResponseGeneral> GetFormAsync(int id)
+        public async Task<ResponseGeneral> GetFormAsync(int id, int audience)
         {
             try
             {
@@ -107,7 +107,18 @@ namespace backend.Services
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = "Inputs" });
-                        command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = $"IDForm={id} AND IsDeleted=0" });
+                        if(audience == 1)
+                        {
+                            command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = $"IDForm={id} AND IsActive=1 AND IsDeleted=0" });
+                        }
+                        if(audience == 0)
+                        {
+                            command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = $"IDForm={id} AND IsDeleted=0" });
+                        }
+
+                        if (audience != 1 && audience != 0) {
+                            throw new Exception("Parámetros inválidos");
+                        }
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {

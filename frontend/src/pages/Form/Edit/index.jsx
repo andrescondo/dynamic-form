@@ -20,7 +20,7 @@ const FormEdit = () => {
 
     const getDataForm = async () => {
         try {
-            const res = await axios.get(`https://localhost:7048/Manage/form/${id}`)
+            const res = await axios.get(`https://localhost:7048/Manage/form/${id}/0`)
                 .catch(err => {
                     console.log(err);
                 })

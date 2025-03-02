@@ -12,7 +12,7 @@ const FormView = () => {
 
     useEffect(() => {
         async function getDataForm() {
-            const res = await axios.get(`https://localhost:7048/Manage/form/${id}`)
+            const res = await axios.get(`https://localhost:7048/Manage/form/${id}/1`)
                 .catch(err => {
                     console.log(err);
                 })

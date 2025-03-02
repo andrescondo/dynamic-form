@@ -30,10 +30,11 @@ namespace backend.Controllers
             return Ok(data);
         }
 
-        [HttpGet("form/{id}", Name = "GetForm")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("form/{id}/{audience}", Name = "GetForm")]
+        // audience= 1:publico , 0:administrador
+        public async Task<IActionResult> Get(int id, int audience)
         {
-            var data = await _manageService.GetFormAsync(id);
+            var data = await _manageService.GetFormAsync(id, audience);
             if (data.Error)
             {
                 return BadRequest(data);
