@@ -49,23 +49,15 @@ body{
 
 .App-Container--list{
   width: 100%;
-  display: flex;
-  flex-direction: column;
   margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  
 }
 
-.App-ContainerList-items{
-  margin: auto;
-  width: 80%;
-  display: flex;
-  justify-content: space-around;
-  padding: 20px 0px;
-  border-bottom:1px solid gray ;
+.App-ContainerList--items{
+  margin: 20px 0px;
 }
 
-.App-ContainerList-items > span{
-  color: white;
-}
 .FormView-List{
   width: 80%;
   margin: auto;
