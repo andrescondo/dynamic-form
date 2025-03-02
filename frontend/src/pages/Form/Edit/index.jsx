@@ -36,8 +36,6 @@ const FormEdit = () => {
                 IDForm: item.IDForm
             }));
 
-            console.log(data);
-
             setContainers(data);
 
 
@@ -86,18 +84,24 @@ const FormEdit = () => {
     }
     const showConfirmChangeIsDelete = (name, index) => {
         // eslint-disable-next-line no-alert
-        const userConfirmed = window.confirm(`¿ Seguro desea eliminar el campo "${name}" ? \nEsta es una acción irreversible`);
+        const userConfirmed = window.confirm(`¿ Seguro desea eliminar el campo "${name}" ? \nCuando se guarde el formulario esta acción será irreversible`);
         if (userConfirmed) {
             handleRemoveContainer(index);
         } else {
             alert("Has cancelado.");
         }
     }
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // eslint-disable-next-line no-alert
+            const userConfirmed = window.confirm(`¿ Seguro desea actualizar este formulario ?`);
+            if (!userConfirmed) {
+                return;
+            }
+
             inputs.inputs = [];
             inputs.id = id;
             inputs.inputs.push(...containers);
@@ -108,13 +112,7 @@ const FormEdit = () => {
                     throw new Error(err.response.data.messages[0].text);
                 });
 
-
-            console.log(res);
-            setContainers([]);
-            const updatedInputs = { name: '', inputs: [] };
-            setInputs(updatedInputs);
-
-            // alert(res.data.messages[0].text)
+            alert(res.data.messages[0].text)
 
         } catch (error) {
             console.log(error);
@@ -131,7 +129,7 @@ const FormEdit = () => {
         <main className='FormView'>
             <header>
                 <div>
-                    <Link className="button" to="/">
+                    <Link className="button" to={`/form/${id}`}>
                         Regresar
                     </Link>
                 </div>
