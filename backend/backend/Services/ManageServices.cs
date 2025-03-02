@@ -107,7 +107,7 @@ namespace backend.Services
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = "Inputs" });
-                        command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = $"IDForm={id}" });
+                        command.Parameters.Add(new SqlParameter("@Parameters", SqlDbType.VarChar) { Value = $"IDForm={id} AND IsDeleted=0" });
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -301,11 +301,7 @@ namespace backend.Services
                             foreach (InputsEdit Input in form.inputs)
                             {
                                 string NameInput = Input.name.Replace(" ", "");
-                                bool? isActiveNullable = Input.IsActive;
-                                bool? isDeleteNullable = Input.IsDeleted;
-
-                                int active;
-                                int deleted;
+                               
                                 string type = "";
 
                                 switch (Input.type)
@@ -322,33 +318,43 @@ namespace backend.Services
                                 }
 
 
-                                if (isActiveNullable.HasValue){
-                                    active = 1;
-                                } else {
-                                    active = 0;
-                                }
+                                
 
-                                if (isDeleteNullable.HasValue){
-                                    deleted = 1;
-                                } else {
-                                    deleted = 0;
-                                }
-
-                                using (var command = new SqlCommand("SP_EditInputs", connection, transaction))
+                                if (Input.ID != null)
                                 {
+                                    bool isActive = Input.IsActive ?? false;
+                                    bool isDeleted = Input.IsDeleted ?? false;
 
-                                    command.CommandType = CommandType.StoredProcedure;
-                                    command.Parameters.Add(new SqlParameter("@InputNameNew", SqlDbType.VarChar) { Value = NameInput });
-                                    command.Parameters.Add(new SqlParameter("@InputId", SqlDbType.Int) { Value = Input.ID });
-                                    command.Parameters.Add(new SqlParameter("@FormId", SqlDbType.Int) { Value = Input.IDForm });
-                                    command.Parameters.Add(new SqlParameter("@FormType", SqlDbType.VarChar) { Value = type });
-                                    command.Parameters.Add(new SqlParameter("@IsActive", SqlDbType.Int) { Value = active });
-                                    command.Parameters.Add(new SqlParameter("@IsDeleted", SqlDbType.Int) { Value = deleted });
+                                    int active = isActive ? 1 : 0;
+                                    int deleted = isDeleted ? 1 : 0;
 
-                                    //command3.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = value });
 
-                                    await command.ExecuteNonQueryAsync();
+
+                                    using (var command = new SqlCommand("SP_EditInputs", connection, transaction))
+                                    {
+                                        command.CommandType = CommandType.StoredProcedure;
+                                        command.Parameters.Add(new SqlParameter("@InputNameNew", SqlDbType.VarChar) { Value = NameInput });
+                                        command.Parameters.Add(new SqlParameter("@InputId", SqlDbType.Int) { Value = Input.ID });
+                                        command.Parameters.Add(new SqlParameter("@FormId", SqlDbType.Int) { Value = Input.IDForm });
+                                        command.Parameters.Add(new SqlParameter("@FormType", SqlDbType.VarChar) { Value = type });
+                                        command.Parameters.Add(new SqlParameter("@IsActive", SqlDbType.Int) { Value = active });
+                                        command.Parameters.Add(new SqlParameter("@IsDeleted", SqlDbType.Int) { Value = deleted });
+
+                                        await command.ExecuteNonQueryAsync();
+                                    }
+                                } else {
+                                    var value = $"'{NameInput}', '{type}', {form.Id}";
+                                    using (var command2 = new SqlCommand("SP_AddDataInputs", connection, transaction))
+                                    {
+                                        command2.CommandType = CommandType.StoredProcedure;
+                                        command2.Parameters.Add(new SqlParameter("@Columns", SqlDbType.VarChar) { Value = "InputsName, InputsType, IDForm" });
+                                        command2.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = value });
+
+                                        await command2.ExecuteNonQueryAsync();
+                                    }
                                 }
+
+                               
                             }
 
                             // Commit the transaction if all commands succeed

@@ -5,7 +5,7 @@ import axios from 'axios';
 import './../../../App.css'
 
 const initialInput = {
-    name: '',
+    id: '',
     inputs: []
 }
 const FormEdit = () => {
@@ -99,16 +99,17 @@ const FormEdit = () => {
         e.preventDefault();
         try {
             inputs.inputs = [];
+            inputs.id = id;
             inputs.inputs.push(...containers);
             console.log(inputs)
 
-            // const res = await axios.post('https://localhost:7048/Manage/form/create', inputs)
-            //     .catch(err => {
-            //         throw new Error(err.response.data.messages[0].text);
-            //     });
+            const res = await axios.put('https://localhost:7048/Manage/form/edit', inputs)
+                .catch(err => {
+                    throw new Error(err.response.data.messages[0].text);
+                });
 
 
-            // console.log(res);
+            console.log(res);
             setContainers([]);
             const updatedInputs = { name: '', inputs: [] };
             setInputs(updatedInputs);

@@ -5,7 +5,14 @@ AS
 BEGIN
     DECLARE @sql NVARCHAR(MAX);
 
-    SET @sql = 'SELECT * FROM ' + @Name + ' WHERE ' + @Parameters;
+    IF @Parameters = ''
+    BEGIN
+        SET @sql = 'SELECT * FROM ' + @Name + ' ; ';
+    END
+    ELSE
+    BEGIN
+        SET @sql = 'SELECT * FROM ' + @Name + ' WHERE ' + @Parameters;
+    END;
 
     EXEC sp_executesql @sql;
         
