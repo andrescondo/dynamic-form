@@ -26,22 +26,45 @@ const FormView = () => {
 
     const handleChange = (e) => {
         setInputs({
-          ...inputs,
-          [e.target.name]: e.target.value,
+            ...inputs,
+            [e.target.name]: e.target.value,
         });
-      }
+    }
 
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        const newBody = handleDivideObject(inputs)
+
+        console.log(newBody)
+     }
+
+     function handleDivideObject(objeto) {
+        let columns = "";
+        let values = "";
+      
+        for (const clave in objeto) {
+          columns += `${clave}, `;
+          values += `${objeto[clave]}, `;
+        }
+      
+        // Eliminar la coma y el espacio final
+        columns = columns.slice(0, -2);
+        values = values.slice(0, -2);
+      
+        return { columns: columns, values: values };
+      }
 
     return (
         <main className='FormView'>
             <header>
                 <div>
                     <Link className="button" to="/">
-                    Regresar
+                        Regresar
                     </Link>
                 </div>
                 <h2>
-                Formulario
+                    Formulario
                 </h2>
                 <div>
                     <Link className='button' to={`/form/edit/${id}`}>
@@ -51,19 +74,19 @@ const FormView = () => {
             </header>
             <section>
 
-                <form className='FormView-List'>
+                <form className='FormView-List' onSubmit={handleSubmit}>
                     {
                         form.map((data, index) => (
                             <label htmlFor={data.ID} className="label">
                                 <span>{data.InputsName}</span>
-                                <input 
+                                <input
                                     key={index}
                                     id={data.ID}
-                                    type={data.InputsType} 
+                                    type={data.InputsType}
                                     name={data.InputsName}
                                     value={inputs[data.InputsName] || ''}
                                     onChange={handleChange}
-                                    />
+                                />
                             </label>
                         ))
                     }
