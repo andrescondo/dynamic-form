@@ -88,7 +88,11 @@ const FormInputEditComponent = ({ id }) => {
     // eslint-disable-next-line no-alert
     const userConfirmed = window.confirm(`¿ Seguro desea eliminar el campo "${name}" ? \nCuando se guarde el formulario esta acción será irreversible`);
     if (userConfirmed) {
-      handleRemoveContainer(index);
+      if(containers[index].ID !== undefined){
+        handleChangeContainer(index, 'IsDeleted', true)
+      }else {
+        handleRemoveContainer(index);
+      }
     } else {
       alert("Has cancelado.");
     }
@@ -107,6 +111,7 @@ const FormInputEditComponent = ({ id }) => {
       inputs.inputs = [];
       inputs.id = id;
       inputs.inputs.push(...containers);
+
 
       const res = await axios.put('https://localhost:7048/Manage/form/edit', inputs)
         .catch(err => {
@@ -134,7 +139,7 @@ const FormInputEditComponent = ({ id }) => {
           </div>
           <div>
             {containers.map((container, index) => (
-              <div key={index} className="label-input">
+              !container.IsDeleted && <div key={index} className="label-input">
                 <label className='label-Inputs'>
                   Nombre del input
                   <input
