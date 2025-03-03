@@ -54,6 +54,6 @@ Pantalla para la creación de inputs (campos) de un formulario
 
 
 Pantalla para la edición de inputs (campos) de un formulario
-![Button start](./images/evidencia-5.png)
+![Button start](./images/evidencia-3.png)
 <!-- Pantalla para el ingreso de información de un formulario (extra)
 Pantalla para la consulta de información de un formulario (extra) -->
