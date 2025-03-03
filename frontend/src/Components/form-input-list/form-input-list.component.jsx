@@ -13,12 +13,12 @@ const FormInputListComponent = ({ id }) => {
         .catch(err => {
           console.log(err);
         })
-
       setForm(res.data.data)
     }
 
     getDataForm();
   }, [])
+
 
   const handleChange = (e) => {
     setInputs({
