@@ -1,17 +1,14 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Threading.Tasks;
 using backend.Models.Response;
 using backend.Models.Request;
 using backend.Network;
 using backend.Data;
-using Newtonsoft.Json;
 using System.Dynamic;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Transactions;
+using System;
 
 namespace backend.Services
 {
@@ -220,6 +217,9 @@ namespace backend.Services
                                     case "date":
                                         type = "DateTime";
                                         break;
+                                    default:
+                                        type = "NVARCHAR(MAX)";
+                                        break;
                                 }
                                 columns += $"{NameInput} {type}, ";
                             }
@@ -326,6 +326,9 @@ namespace backend.Services
                                     case "date":
                                         type = "DateTime";
                                         break;
+                                    default:
+                                        type = "NVARCHAR(MAX)";
+                                        break;
                                 }
 
 
@@ -354,7 +357,12 @@ namespace backend.Services
                                         await command.ExecuteNonQueryAsync();
                                     }
                                 } else {
-                                    var value = $"'{NameInput}', '{type}', {form.Id}";
+                                    string NewType = Input.type;
+                                    int id = form.Id;
+                                    object? idInput;
+                                    string value = String.Format("'{0}', '{1}', {2}", NameInput, NewType, id);
+
+
                                     using (var command2 = new SqlCommand("SP_AddDataInputs", connection, transaction))
                                     {
                                         command2.CommandType = CommandType.StoredProcedure;
@@ -362,6 +370,30 @@ namespace backend.Services
                                         command2.Parameters.Add(new SqlParameter("@Values", SqlDbType.VarChar) { Value = value });
 
                                         await command2.ExecuteNonQueryAsync();
+                                        using (var reader = await command2.ExecuteReaderAsync())
+                                        {
+                                            if (await reader.ReadAsync())
+                                            {
+                                                idInput = reader["ID"];
+                                            }
+                                            else
+                                            {
+                                                throw new Exception("No se guardo correctamente el registro");
+                                            }
+                                        }
+                                    }
+
+                                    using (var command3 = new SqlCommand("SP_EditInputs", connection, transaction))
+                                    {
+                                        command3.CommandType = CommandType.StoredProcedure;
+                                        command3.Parameters.Add(new SqlParameter("@InputNameNew", SqlDbType.VarChar) { Value = NameInput });
+                                        command3.Parameters.Add(new SqlParameter("@InputId", SqlDbType.Int) { Value = idInput });
+                                        command3.Parameters.Add(new SqlParameter("@FormId", SqlDbType.Int) { Value = id });
+                                        command3.Parameters.Add(new SqlParameter("@FormType", SqlDbType.VarChar) { Value = type });
+                                        command3.Parameters.Add(new SqlParameter("@IsActive", SqlDbType.Int) { Value = 1 });
+                                        command3.Parameters.Add(new SqlParameter("@IsDeleted", SqlDbType.Int) { Value = 0 });
+
+                                        await command3.ExecuteNonQueryAsync();
                                     }
                                 }
 

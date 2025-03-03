@@ -1,59 +1,12 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+
 import { useParams } from 'react-router-dom';
 import './../../../App.css'
 import { Link } from "react-router-dom";
+import FormInputListComponent from '../../../Components/form-input-list/form-input-list.component';
 
 
 const FormView = () => {
-    const [form, setForm] = useState([]);
-    const [inputs, setInputs] = useState({});
     const { id } = useParams();
-
-    useEffect(() => {
-        async function getDataForm() {
-            const res = await axios.get(`https://localhost:7048/Manage/form/${id}/1`)
-                .catch(err => {
-                    console.log(err);
-                })
-
-            console.log(res.data.data);
-            setForm(res.data.data)
-        }
-
-        getDataForm();
-    }, [])
-
-    const handleChange = (e) => {
-        setInputs({
-            ...inputs,
-            [e.target.name]: e.target.value,
-        });
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-
-        const newBody = handleDivideObject(inputs)
-
-        console.log(newBody)
-     }
-
-     function handleDivideObject(objeto) {
-        let columns = "";
-        let values = "";
-      
-        for (const clave in objeto) {
-          columns += `${clave}, `;
-          values += `${objeto[clave]}, `;
-        }
-      
-        // Eliminar la coma y el espacio final
-        columns = columns.slice(0, -2);
-        values = values.slice(0, -2);
-      
-        return { columns: columns, values: values };
-      }
 
     return (
         <main className='FormView'>
@@ -72,29 +25,8 @@ const FormView = () => {
                     </Link>
                 </div>
             </header>
-            <section>
-
-                <form className='FormView-List' onSubmit={handleSubmit}>
-                    {
-                        form.map((data, index) => (
-                            <label htmlFor={data.ID} className="label">
-                                <span>{data.InputsName}</span>
-                                <input
-                                    key={index}
-                                    id={data.ID}
-                                    type={data.InputsType}
-                                    name={data.InputsName}
-                                    value={inputs[data.InputsName] || ''}
-                                    onChange={handleChange}
-                                />
-                            </label>
-                        ))
-                    }
-                    <input className='button' type="submit" value="Guardar" />
-                </form>
-
-
-            </section>
+            <FormInputListComponent id={id} />
+            
         </main>
     )
 }
